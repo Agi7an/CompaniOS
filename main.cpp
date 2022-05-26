@@ -679,7 +679,7 @@ int main()
             wprintf(L"\t\t\x1b[46;97m+ %s\x1b[0m\n\n", modes[i].c_str());
         }
         // cout << "\t" << "- Edit Modes\n" << "\t" << "- Exit\n\nEnter your choice: ";
-        wprintf(L"\t\x1b[44;97m- Edit Modes\n\t- Exit\x1b[0m\n\n");
+        wprintf(L"\t\x1b[44;97m- Edit Modes\x1b[0m\n\t\x1b[44;97m- Exit\x1b[0m\n\n");
         cout << "Enter your choice: ";
         cin >> choice;
         transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
