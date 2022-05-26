@@ -1,0 +1,2 @@
+"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe","https://docs.microsoft.com/en-us/windows/win32/desktop-programming?redirectedfrom=MSDN"
+"D:\\Applications\\putty.exe","10.1.67.152"

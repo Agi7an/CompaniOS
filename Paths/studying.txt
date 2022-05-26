@@ -1,0 +1,2 @@
+"notepad.exe","Notes.txt"
+"D:\\TCS\fourthSem\\Operating Systems\\Text Books\\William Stallings - Operating Systems (1).pdf","#page=123"
