@@ -11,9 +11,22 @@
 #include <wininet.h>
 #include <filesystem>
 #include <wchar.h>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 using namespace std;
+
+int getModeCount()
+{
+    string path = "./Paths/";
+    int modeCount = 0;
+    for (const auto &f : fs::directory_iterator(path))
+    {
+        modeCount++;
+    }
+
+    return modeCount;
+}
 
 BOOL terminateProcess(DWORD dwProcessId, UINT uExitCode)
 {
@@ -56,6 +69,59 @@ int runProcess(const char *app, const char *arg = NULL)
     printf("\nSuccessfully opened %s!\n", app);
 
     return GetProcessId(pInfo.hProcess);
+}
+
+void setUpMode(string modeName)
+{
+    char c;
+    ifstream file;
+    string line, substr, path = "./Paths/";
+    path = path + modeName + ".txt";
+    vector<string> values;
+    int j = 0;
+    file.open(path, ios::in);
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        while (ss.good())
+        {
+            getline(ss, substr, ',');
+            values.push_back(substr);
+        }
+    }
+    file.close();
+
+    int n = values.size() / 2;
+    const char **apps = new const char *[n], **args = new const char *[n];
+    int *pid = new int(n);
+
+    for (int i = 0; i < values.size(); i++)
+    {
+        if (i % 2 == 0)
+        {
+            apps[j] = values[i].c_str();
+        }
+        else
+        {
+            args[j] = values[i].c_str();
+            pid[j] = runProcess(apps[j], args[j]);
+            j++;
+        }
+    }
+
+    cout << "\nEnter 'e' to exit: ";
+    cin >> c;
+
+    for (int i = 0; i < n; i++)
+    {
+        terminateProcess(pid[i], 0);
+    }
+
+    delete[] pid;
+    delete[] apps;
+    delete[] args;
+
+    return;
 }
 
 void setCodingMode()
@@ -571,8 +637,10 @@ void edit()
 
 int main()
 {
-    char c;
+    string choice;
     char username[UNLEN + 1];
+    int noOfModes = getModeCount();
+    vector<string> modes;
 
     // Getting the Windows username
     DWORD username_len = UNLEN + 1;
@@ -588,33 +656,52 @@ int main()
         cout << "\n\x1b[7;31mYou are NOT connected to the internet!\x1b[0m\n";
     }
 
-    wprintf(L"\n\n\x1b[32mHey %s!\x1b[0m\n\n\x1b[4;36mPick a mode:\x1b[0m\n\t\x1b[97m1. Coding\n\t2. Gaming\n\t3. Studying\n\t4. Edit Modes\n\t5. Exit\x1b[0m\n", username);
-    cin >> c;
-    switch (c)
+    wprintf(L"\n\n\x1b[32mHey %s!\x1b[0m\n\n", username);
+    for (const auto &f : fs::directory_iterator("./Paths/"))
     {
-    case '1':
-        printf("\nSetting up coding mode...\n");
-        setCodingMode();
-        break;
-    case '2':
-        printf("\nSetting up gaming mode...\n");
-        setGamingMode();
-        break;
-    case '3':
-        printf("\nSetting up studying mode...\n");
-        setStudyingMode();
-        break;
-    case '4':
-        printf("\nPreparing to edit modes...\n");
-        edit();
-        break;
-    case '5':
-        return 0;
-    default:
-        printf("Invalid option!\n");
-    };
+        char line[100];
+        string modeName = f.path().u8string();
+        size_t start = modeName.find("s/");
+        size_t len = modeName.find(".txt");
+        start += 2;
+        len -= start;
+        modeName = modeName.substr(start, len);
+        transform(modeName.begin(), modeName.end(), modeName.begin(), ::tolower);
+        modes.push_back(modeName);
+    }
 
-    cout << "\n\n----------------THANK YOU----------------\n\n";
+    do
+    {
+        wprintf(L"\n\x1b[1;44;97mMENU:\x1b[0m\n\t\x1b[1;46;97mMODES:\x1b[0m\n");
+        for (int i = 0; i < modes.size(); i++)
+        {
+            // cout << "\t\t+ " << modes[i] << "\n";
+            wprintf(L"\t\t\x1b[46;97m+ %s\x1b[0m\n\n", modes[i].c_str());
+        }
+        // cout << "\t" << "- Edit Modes\n" << "\t" << "- Exit\n\nEnter your choice: ";
+        wprintf(L"\t\x1b[44;97m- Edit Modes\n\t- Exit\x1b[0m\n\n");
+        cout << "Enter your choice: ";
+        cin >> choice;
+        transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
+        if (find(modes.begin(), modes.end(), choice) != modes.end())
+        {
+            setUpMode(choice);
+        }
+        else if (choice == "Edit Modes" || choice == "edit modes" || choice == "Edit" || choice == "edit")
+        {
+            edit();
+        }
+        else if (choice != "Exit" && choice != "exit")
+        {
+            cout << "Invalid Option!\n";
+        }
+        else
+        {
+            break;
+        }
+    } while (choice != "Exit" && choice != "exit");
+
+    wprintf(L"\n\n\x1b[101;93m-------------------\x1b[0m\x1b[1;4;101;93mTHANK YOU\x1b[0m\x1b[101;93m-------------------\x1b[0m\n\n");
 
     return 0;
 }
