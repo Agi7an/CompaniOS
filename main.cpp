@@ -16,11 +16,12 @@
 namespace fs = std::filesystem;
 using namespace std;
 
+string PATH = "D:/TCS/fourthSem/OS Lab/Package/CompaniOS/Paths/";
+
 int getModeCount()
 {
-    string path = "./Paths/";
     int modeCount = 0;
-    for (const auto &f : fs::directory_iterator(path))
+    for (const auto &f : fs::directory_iterator(PATH))
     {
         modeCount++;
     }
@@ -75,7 +76,7 @@ void setUpMode(string modeName)
 {
     char c;
     ifstream file;
-    string line, substr, path = "./Paths/";
+    string line, substr, path = PATH;
     path = path + modeName + ".txt";
     vector<string> values;
     int j = 0;
@@ -124,175 +125,9 @@ void setUpMode(string modeName)
     return;
 }
 
-void setCodingMode()
-{
-    char c;
-    ifstream file;
-    string line, substr;
-    vector<string> values;
-    int j = 0;
-    file.open("D:\\TCS\\fourthSem\\OS Lab\\Package\\Rough\\Paths\\coding.txt", ios::in);
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        while (ss.good())
-        {
-            getline(ss, substr, ',');
-            values.push_back(substr);
-        }
-    }
-    file.close();
-
-    int n = values.size() / 2;
-    const char **apps = new const char *[n], **args = new const char *[n];
-    int *pid = new int(n);
-
-    for (int i = 0; i < values.size(); i++)
-    {
-        if (i % 2 == 0)
-        {
-            apps[j] = values[i].c_str();
-        }
-        else
-        {
-            args[j] = values[i].c_str();
-            j++;
-        }
-    }
-
-    cout << "App 1: " << apps[0] << " with " << args[0] << "\n";
-    cout << "App 2: " << apps[1] << " with " << args[1] << "\n";
-
-    pid[0] = runProcess(apps[0], args[0]);
-    pid[1] = runProcess(apps[1], args[1]);
-
-    cout << "\nEnter 'e' to exit: ";
-    cin >> c;
-
-    terminateProcess(pid[0], 0);
-    terminateProcess(pid[1], 0);
-
-    delete[] pid;
-    delete[] apps;
-    delete[] args;
-
-    return;
-}
-
-void setGamingMode()
-{
-    char c;
-    ifstream file;
-    string line, substr;
-    vector<string> values;
-    int j = 0;
-    file.open("D:\\TCS\\fourthSem\\OS Lab\\Package\\Rough\\Paths\\gaming.txt", ios::in);
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        while (ss.good())
-        {
-            getline(ss, substr, ',');
-            values.push_back(substr);
-        }
-    }
-    file.close();
-
-    int n = values.size() / 2;
-    const char **apps = new const char *[n], **args = new const char *[n];
-    int *pid = new int(n);
-
-    for (int i = 0; i < values.size(); i++)
-    {
-        if (i % 2 == 0)
-        {
-            apps[j] = values[i].c_str();
-        }
-        else
-        {
-            args[j] = values[i].c_str();
-            j++;
-        }
-    }
-
-    cout << "App 1: " << apps[0] << " with " << args[0] << "\n";
-    cout << "App 2: " << apps[1] << " with " << args[1] << "\n";
-
-    pid[0] = runProcess(apps[0], args[0]);
-    pid[1] = runProcess(apps[1], args[1]);
-
-    cout << "\nEnter 'e' to exit: ";
-    cin >> c;
-
-    terminateProcess(pid[0], 0);
-    terminateProcess(pid[1], 0);
-
-    delete[] pid;
-    delete[] apps;
-    delete[] args;
-
-    return;
-}
-
-void setStudyingMode()
-{
-    char c;
-    ifstream file;
-    string line, substr;
-    vector<string> values;
-    int j = 0;
-
-    file.open("D:\\TCS\\fourthSem\\OS Lab\\Package\\Rough\\Paths\\studying.txt", ios::in);
-    while (getline(file, line))
-    {
-        stringstream ss(line);
-        while (ss.good())
-        {
-            getline(ss, substr, ',');
-            values.push_back(substr);
-        }
-    }
-    file.close();
-
-    int n = values.size() / 2;
-    const char **apps = new const char *[n], **args = new const char *[n];
-    int *pid = new int(n);
-
-    for (int i = 0; i < values.size(); i++)
-    {
-        if (i % 2 == 0)
-        {
-            apps[j] = values[i].c_str();
-        }
-        else
-        {
-            args[j] = values[i].c_str();
-            j++;
-        }
-    }
-
-    cout << "App 1: " << apps[0] << " with " << args[0] << "\n";
-    cout << "App 2: " << apps[1] << " with " << args[1] << "\n";
-
-    pid[0] = runProcess(apps[0], args[0]);
-    pid[1] = runProcess(apps[1], args[1]);
-
-    cout << "\nEnter 'e' to exit: ";
-    cin >> c;
-
-    terminateProcess(pid[0], 0);
-    terminateProcess(pid[1], 0);
-
-    delete[] pid;
-    delete[] apps;
-    delete[] args;
-
-    return;
-}
-
 int addMode()
 {
-    string modeName, newModePath, path = "./Paths/";
+    string modeName, newModePath;
     bool exists;
     do
     {
@@ -303,11 +138,11 @@ int addMode()
         {
             return -1;
         }
-        newModePath = path + modeName;
+        newModePath = PATH + modeName;
         newModePath += ".txt";
 
         // Check if mode already exists
-        for (const auto &f : fs::directory_iterator(path))
+        for (const auto &f : fs::directory_iterator(PATH))
         {
             if (newModePath == f.path())
             {
@@ -354,7 +189,7 @@ int addMode()
 
 int editMode()
 {
-    string modePath, modeName, path = "./Paths/";
+    string modePath, modeName;
     bool exists = false;
 
     cout << "Enter the name of the mode to be edited: ";
@@ -364,10 +199,10 @@ int editMode()
     {
         return -1;
     }
-    modePath = path + modePath + ".txt";
+    modePath = PATH + modePath + ".txt";
 
     // Check if mode already exists
-    for (const auto &f : fs::directory_iterator(path))
+    for (const auto &f : fs::directory_iterator(PATH))
     {
         if (modePath == f.path())
         {
@@ -571,7 +406,7 @@ int editMode()
 
 int deleteMode()
 {
-    string del_modePath, del_modeName, path = "./Paths/";
+    string del_modePath, del_modeName;
     bool deleted = false;
 
     cout << "Enter the name of the mode to be removed: ";
@@ -581,10 +416,10 @@ int deleteMode()
     {
         return -1;
     }
-    del_modePath = path + del_modePath + ".txt";
+    del_modePath = PATH + del_modePath + ".txt";
 
     // Check if mode already exists
-    for (const auto &f : fs::directory_iterator(path))
+    for (const auto &f : fs::directory_iterator(PATH))
     {
         if (del_modePath == f.path())
         {
@@ -657,7 +492,7 @@ int main()
     }
 
     wprintf(L"\n\n\x1b[32mHey %s!\x1b[0m\n\n", username);
-    for (const auto &f : fs::directory_iterator("./Paths/"))
+    for (const auto &f : fs::directory_iterator(PATH))
     {
         char line[100];
         string modeName = f.path().u8string();
