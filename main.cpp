@@ -18,6 +18,8 @@ using namespace std;
 
 string PATH = "D:/TCS/fourthSem/OS Lab/Package/CompaniOS/Paths/";
 
+vector<string> modes;
+
 int getModeCount()
 {
     int modeCount = 0;
@@ -152,6 +154,7 @@ int addMode()
         }
     } while (exists);
 
+    modes.push_back(modeName);
     string more;
     ofstream file(newModePath);
 
@@ -436,6 +439,7 @@ int deleteMode()
     }
     else
     {
+        modes.erase(find(modes.begin(), modes.end(), del_modeName));
         cout << "\nThe mode " << del_modeName << " has been successfully deleted.\n";
     }
 
@@ -475,7 +479,6 @@ int main()
     string choice;
     char username[UNLEN + 1];
     int noOfModes = getModeCount();
-    vector<string> modes;
 
     // Getting the Windows username
     DWORD username_len = UNLEN + 1;
